@@ -3,10 +3,13 @@ import './App.css';
 import Test from "./Test"
 import * as redux from "redux";
 import {Provider} from "react-redux";
+import thunk from "redux-thunk";
+import {reducer as formReucer} from "redux-form";
+import Form from "./form"
+import {Switch, BrowserRouter as Router,Route} from "react-router-dom"
 
 function App() {
   const counterAdd= "add";
-  const [ricePlant, setRicePlant] = useState(0);
   const count=0
   
   const reducer =(state=count,action)=>{
@@ -33,13 +36,14 @@ function App() {
       }
     }
   }
-  const pushreduser =(state={},action)=>{
-    return{
-      addcount:reducer(state.addcount,action),
-      minuscount:pushreducer(state.minuscount,action)
+  const pushreduser = redux.combineReducers(
+    {
+      addcount:reducer,
+      minuscount:pushreducer,
+      form:formReucer
     }
-  }
-  const store = redux.createStore(pushreduser)
+)
+  const store = redux.createStore(pushreduser, redux.applyMiddleware(thunk))
   const add=()=>{
     store.dispatch({type:counterAdd})
     store.dispatch({type:"counterAdd",value:4})
@@ -48,11 +52,22 @@ function App() {
   }
   return (
     <Provider store={store}>
-      <Test/>
       <br/>
       <br/>
       <br/>
         <button onClick={()=>{add()}}>add</button>
+        <Router>
+
+                <Switch>
+                  <Route exact path="/form">
+                  <Form/>
+                  </Route>
+                  <Route exact path="/test">
+                  <Test/>
+                  </Route>
+                </Switch>
+
+            </Router>
      </Provider>
 
   );
